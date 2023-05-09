@@ -1,0 +1,39 @@
+ <div class="log-in-card">
+  <div class="log-in__decoration log-in__decoration--circle1"></div>
+  <div class="log-in__decoration log-in__decoration--circle2"></div>
+  <div class="log-in__decoration log-in__decoration--circle3"></div>
+  <div class="log-in__decoration log-in__decoration--circle4"></div>
+  <form [formGroup]="myForm" (submit)="login()">
+    <div class="log-in">
+      <h1 class="log-in__text"><strong>Login</strong></h1>
+          <div class="log-in__file">
+            <h3 class="log-in__text">Correo</h3>
+            <input formControlName="email" class="log-in__input" type="text" matInput
+            placeholder="example@example.com">
+          </div>
+
+          <div class="log-in__file">
+            <h3 class="log-in__text">Password</h3>
+            <input formControlName="password" class="log-in__input" type="password"
+            placeholder="Password">
+          </div>
+
+        <button mat-raised-button
+                type="submit"
+                class="log-in__btn"
+                [disabled]="myForm.invalid"><strong>Ingresar</strong></button>
+
+        <div class="log-in__options">
+          <a routerLink="/auth/login">Register now</a>
+          <a routerLink="/auth/login">Forgot password?</a>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="form-build-info">
+    <div>{{myForm.valid | json}}</div>
+    <div>{{myForm.get('email')!.errors | json}}</div>
+    <div>{{myForm.get('password')!.errors| json}}</div>
+  </div>
+
+
