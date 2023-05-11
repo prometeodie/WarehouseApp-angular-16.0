@@ -1,8 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { environment } from '../../../assets/environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { AuthStatus, LoginResponse, User } from '../interfaces';
-import { Observable, catchError, map, tap, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthStatus, CheckTokenResponse, LoginResponse, User } from '../interfaces';
+import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
 
 
 
@@ -22,7 +22,18 @@ export class AuthService {
     public currentUser = computed(( )=> this._currentUser());
     public authStatus = computed(( )=> this._authStatus());
 
-  constructor() { }
+  constructor() {
+    this.checkAuthStatus().subscribe();
+   }
+
+   private setUserAuthentication(user: User, accessToken: string): boolean{
+          this._currentUser.set( user );
+          this._authStatus.set( AuthStatus.authenticated  );
+          localStorage.setItem('token', accessToken);
+          localStorage.setItem('id', user.id.toString());
+
+          return true;
+    }
 
   login (email:string, password:string): Observable<boolean>{
 
@@ -30,11 +41,8 @@ export class AuthService {
     const body = {email, password};
     return this.http.post<LoginResponse>(url, body)
     .pipe(
-      tap(({user, accessToken})=>{
-        this._currentUser.set( user );
-        this._authStatus.set( AuthStatus.authenticated  );
-        localStorage.setItem('token', accessToken);
-        console.log(user, accessToken)
+      map(({user, accessToken})=>{
+        return this.setUserAuthentication(user, accessToken);
       }),
       map(()=> true),
 
@@ -42,6 +50,47 @@ export class AuthService {
       catchError(err => throwError(()=> err.error.message))
     )
   }
+
+  checkAuthStatus(): Observable<boolean>{
+    const url = `${this.baseUrl}/600/users/2`;
+    const token = localStorage.getItem('token');
+    const id = parseInt( localStorage.getItem('id')!);
+
+
+    if(!token) {
+      this._authStatus.set( AuthStatus.noAuthenticated );
+      return of(false)
+    };
+    this._authStatus.set( AuthStatus.authenticated );
+    this.http.get<User>(`${this.baseUrl}/users/${id}`).subscribe(user =>{
+      this._currentUser.set( user );
+    })
+    return of(true);
+
+    //TODO: Real solution for a real case "below"
+
+    // const headers = new HttpHeaders()
+    // .set('Authorization',`Bearer ${token}`);
+
+    // return this.http.get<CheckTokenResponse>(url, { headers })
+    // .pipe(
+    //     map(({accessToken, user}) => {
+    //     return this.setUserAuthentication(user, accessToken);
+    //     }),
+    //     catchError((err)=>{
+    //       this._authStatus.set(AuthStatus.noAuthenticated);
+    //       return of(false);
+    //     })
+    // )
+
+  }
+
+  logOutUser(){
+    localStorage.clear();
+    this._currentUser.set(null);
+    this._authStatus.set(AuthStatus.noAuthenticated);
+  }
+
 }
 
 

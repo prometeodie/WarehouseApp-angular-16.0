@@ -22,7 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     MaterialModule,
     SharedModule,
-     BrowserAnimationsModule
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

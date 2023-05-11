@@ -1,4 +1,23 @@
-HEADER
 
-<h4>{{user() | json}}</h4>
-<router-outlet></router-outlet>
+<!-- <div>
+  <div style="display: flex;">
+    <component-side-nave [ngStyle]="{width:'250px'}"></component-side-nave>
+    <router-outlet></router-outlet>
+  </div>
+</div> -->
+
+
+<component-header></component-header>
+<mat-sidenav-container style="height: 100vh; width:100%;background-color: red;">
+  <button mat-icon-button (click)="sidenav.toggle()"><mat-icon  fontIcon="menu"></mat-icon></button>
+  <mat-sidenav #sidenav mode="push" style="width:300px; background-color: black;">
+    <mat-toolbar>
+      <span>menu</span>
+      <span class="spacer">menu</span>
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon  fontIcon="menu"></mat-icon>
+      </button>
+
+    </mat-toolbar>
+  </mat-sidenav>
+</mat-sidenav-container>

@@ -4,11 +4,13 @@ import { WarehouseListComponent } from './pages/warehouse-list/warehouse-list.co
 import { NewWarehouseComponent } from './pages/new-warehouse/new-warehouse.component';
 import { MapComponent } from './pages/map/map.component';
 import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
+import { isAuthenticatedChildGuard, isAuthenticatedGuard } from '../auth/guards';
 
 const routes: Routes = [
   {
     path:'',
     component: LayoutPageComponent,
+    canActivateChild:[isAuthenticatedChildGuard],
     children:[
       {path:'map', component: MapComponent },
       {path:'new-warehouse', component: NewWarehouseComponent },

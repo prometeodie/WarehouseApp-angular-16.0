@@ -1,2 +1,7 @@
-<router-outlet></router-outlet>
+<!--
+<h1 *ngIf="!finishAuthCheck()">
+  Loading....
+</h1> -->
+
+<router-outlet *ngIf="finishAuthCheck()"></router-outlet>
 <shared-footer></shared-footer>
