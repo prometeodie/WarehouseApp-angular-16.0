@@ -9,8 +9,6 @@ import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
 import { MapComponent } from './pages/map/map.component';
 import { NewWarehouseComponent } from './pages/new-warehouse/new-warehouse.component';
 import { WarehouseListComponent } from './pages/warehouse-list/warehouse-list.component';
-import { SideNaveComponent } from './components/side-nave/side-nave.component';
-
 
 @NgModule({
   declarations: [
@@ -18,8 +16,7 @@ import { SideNaveComponent } from './components/side-nave/side-nave.component';
     LayoutPageComponent,
     MapComponent,
     NewWarehouseComponent,
-    WarehouseListComponent,
-    SideNaveComponent,
+    WarehouseListComponent
   ],
   imports: [
     CommonModule,

@@ -5,10 +5,13 @@
   position: absolute;
   top: 2rem;
   left: 2rem;
-  color: white;
+  color: $fonts-color;
   z-index: 999;
 }
 
+.log-in__error-menssage{
+  color: rgb(223, 45, 45);
+}
 .log-in-card{
 
   width: 100%;

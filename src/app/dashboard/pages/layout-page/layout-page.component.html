@@ -1,23 +1,34 @@
-
-<!-- <div>
-  <div style="display: flex;">
-    <component-side-nave [ngStyle]="{width:'250px'}"></component-side-nave>
-    <router-outlet></router-outlet>
-  </div>
-</div> -->
-
-
+<!-- header -->
 <component-header></component-header>
-<mat-sidenav-container style="height: 100vh; width:100%;background-color: red;">
-  <button mat-icon-button (click)="sidenav.toggle()"><mat-icon  fontIcon="menu"></mat-icon></button>
-  <mat-sidenav #sidenav mode="push" style="width:300px; background-color: black;">
-    <mat-toolbar>
-      <span>menu</span>
-      <span class="spacer">menu</span>
-      <button mat-icon-button (click)="sidenav.toggle()">
-        <mat-icon  fontIcon="menu"></mat-icon>
-      </button>
+<!-- side-nav -->
+<mat-sidenav-container class="sidenav-container">
+
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon fontIcon="menu"></mat-icon>
+  </button>
+
+  <mat-sidenav #sidenav mode="push" class="sidenav-container__toolbar" >
+
+    <mat-toolbar class="sidenav-container__toolbar-header">
+
+        <span class="sidenav-container__header-title spacer">Menu</span>
+        <button mat-icon-button (click)="sidenav.toggle()"><mat-icon fontIcon="menu"></mat-icon></button>
 
     </mat-toolbar>
+    <mat-nav-list>
+      <mat-list-item
+      *ngFor="let item of sideNavItems"
+      [routerLink]="item.url"
+      (click)="sidenav.toggle()">
+      <div class="sidenav-container__toolbar-item">
+        <mat-icon [fontIcon]="item.icon" matListItemIcon ></mat-icon>
+        <span class="sidenav-container__toolbar-item-label">{{item.label}}</span>
+
+      </div>
+      </mat-list-item>
+    </mat-nav-list>
+
   </mat-sidenav>
+  <!-- body -->
+  <router-outlet></router-outlet>
 </mat-sidenav-container>

@@ -1,4 +1,6 @@
- <div class="log-in-card">
+
+
+<div class="log-in-card">
   <div class="log-in__decoration log-in__decoration--circle1"></div>
   <div class="log-in__decoration log-in__decoration--circle2"></div>
   <div class="log-in__decoration log-in__decoration--circle3"></div>
@@ -10,12 +12,16 @@
             <h3 class="log-in__text">Correo</h3>
             <input formControlName="email" class="log-in__input" type="text" matInput
             placeholder="example@example.com">
+            <span class="log-in__error-menssage"
+                  *ngIf="isValidField('email')">{{showError('email', emailPatternMenssage)}}</span>
           </div>
 
           <div class="log-in__file">
             <h3 class="log-in__text">Password</h3>
             <input formControlName="password" class="log-in__input" type="password"
             placeholder="Password">
+            <span class="log-in__error-menssage"
+                  *ngIf="isValidField('password')">{{ showError('password', passwordPatternMenssage) }}</span>
           </div>
 
         <button mat-raised-button
