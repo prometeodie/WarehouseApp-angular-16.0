@@ -16,6 +16,7 @@ export class AuthService {
 
     private _currentUser = signal< User|null>(null);
     private _authStatus = signal<AuthStatus>(AuthStatus.checking);
+    private _userRol = signal<string | null>('USER');
 
 
 
@@ -52,7 +53,7 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean>{
-    const url = `${this.baseUrl}/600/users/2`;
+    // const url = `${this.baseUrl}/600/users/2`;
     const token = localStorage.getItem('token');
     const id = parseInt( localStorage.getItem('id')!);
 
@@ -64,6 +65,7 @@ export class AuthService {
     this._authStatus.set( AuthStatus.authenticated );
     this.http.get<User>(`${this.baseUrl}/users/${id}`).subscribe(user =>{
       this._currentUser.set( user );
+      this._userRol.set(user.roles);
     })
     return of(true);
 
@@ -88,6 +90,7 @@ export class AuthService {
   logOutUser(){
     localStorage.clear();
     this._currentUser.set(null);
+    this._userRol.set(null);
     this._authStatus.set(AuthStatus.noAuthenticated);
   }
 

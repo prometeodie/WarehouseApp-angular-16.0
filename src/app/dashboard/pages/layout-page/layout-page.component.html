@@ -20,10 +20,9 @@
       *ngFor="let item of sideNavItems"
       [routerLink]="item.url"
       (click)="sidenav.toggle()">
-      <div class="sidenav-container__toolbar-item">
+      <div class="sidenav-container__toolbar-item" >
         <mat-icon [fontIcon]="item.icon" matListItemIcon ></mat-icon>
         <span class="sidenav-container__toolbar-item-label">{{item.label}}</span>
-
       </div>
       </mat-list-item>
     </mat-nav-list>

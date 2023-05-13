@@ -4,18 +4,18 @@ import { WarehouseListComponent } from './pages/warehouse-list/warehouse-list.co
 import { NewWarehouseComponent } from './pages/new-warehouse/new-warehouse.component';
 import { MapComponent } from './pages/map/map.component';
 import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
-import { isAuthenticatedChildGuard, isAuthenticatedGuard } from '../auth/guards';
+
+import { hasRoleChildGuard } from './guards/has-role-child.guard';
 
 const routes: Routes = [
   {
     path:'',
     component: LayoutPageComponent,
-    canActivateChild:[isAuthenticatedChildGuard],
     children:[
-      {path:'map', component: MapComponent },
-      {path:'new-warehouse', component: NewWarehouseComponent },
-      {path:'warehouse-list', component: WarehouseListComponent },
-      {path: '**', redirectTo:'warehouse-list'}
+      {path:'map',canActivate:[hasRoleChildGuard (['ADMIN'])],component: MapComponent },
+      {path:'new-warehouse',canActivate:[hasRoleChildGuard (['ADMIN','USER'])] ,component: NewWarehouseComponent },
+      {path:'warehouse-list',component: WarehouseListComponent},
+      {path: '**', redirectTo:'warehouse-list',}
     ]
   }
 ];

@@ -1,14 +1,5 @@
 @import '../../../scss/variables.scss';
 
-// TODO:borrar
-.form-build-info{
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  color: $fonts-color;
-  z-index: 999;
-}
-
 .log-in__error-menssage{
   color: rgb(223, 45, 45);
 }

@@ -14,8 +14,6 @@ export class AppComponent {
 
   private authService = inject(AuthService);
   public router = inject(Router);
-  private UserWantToGo = '';
-
 
   public finishAuthCheck = computed<boolean>(()=>{
     if(this.authService.authStatus() === AuthStatus.checking ){
@@ -26,9 +24,6 @@ export class AppComponent {
   });
 
   public authStatusChangeEfect = effect(()=>{
-    if(localStorage.getItem('url')){
-      this.UserWantToGo = localStorage.getItem('url')!;
-    }
 
     switch (this.authService.authStatus()){
 

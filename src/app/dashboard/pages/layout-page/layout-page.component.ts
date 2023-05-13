@@ -1,8 +1,9 @@
-import { Component, computed, inject  } from '@angular/core';
+import { Component, OnInit  } from '@angular/core';
 import { AuthService } from 'src/app/auth/services/auth.service';
 
 export  interface SideNavItems{
   label:string;
+  roles:string[]
   icon:string;
   url:string;
 }
@@ -11,18 +12,18 @@ export  interface SideNavItems{
   templateUrl: './layout-page.component.html',
   styleUrls: ['./layout-page.component.scss']
 })
-export class LayoutPageComponent   {
-
-private authService = inject(AuthService);
-
-public user = computed(()=> this.authService.currentUser());
+export class LayoutPageComponent implements OnInit   {
 
 public sideNavItems: SideNavItems[] = [
-  {label:'warehouse List', icon:'home',url:'/dashboard/warehouse-list'},
-  {label:'Add new Warehouse', icon:'add_box' ,url:'/dashboard/new-warehouse' },
-  {label:'Closest Warehouse', icon:'map' ,url:'/dashboard/map' }
-]
+  {label:'warehouse List',   roles:['ADMIN','USER'], icon:'home',url:'/dashboard/warehouse-list'},
+  {label:'Add new Warehouse',roles:['ADMIN','USER'], icon:'add_box' ,url:'/dashboard/new-warehouse' },
+  {label:'Closest Warehouse',roles:['ADMIN'], icon:'map' ,url:'/dashboard/map' }]
 
+  constructor( ){
 
+  }
+  ngOnInit(): void {
+
+  }
 
 }

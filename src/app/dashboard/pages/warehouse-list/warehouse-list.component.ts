@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-warehouse-list',
   templateUrl: './warehouse-list.component.html',
   styleUrls: ['./warehouse-list.component.scss']
 })
-export class WarehouseListComponent implements OnInit {
+export class WarehouseListComponent {
 
-  constructor() { }
+  private authService = inject(AuthService);
 
-  ngOnInit(): void {
+  constructor() {
+
+    this.authService.checkAuthStatus().subscribe();
   }
 
 }
+
+
