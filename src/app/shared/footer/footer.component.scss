@@ -9,6 +9,7 @@
   justify-content: end;
   position: fixed;
   width: 100%;
+  z-index: 99;
 
     &__info{
       font-weight: bold;

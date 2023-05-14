@@ -1,0 +1,11 @@
+.list-container{
+  position: relative;
+  &__btn{
+    position: absolute;
+    bottom: 0.5rem;
+    right: 2rem;
+    margin-bottom: 30px;
+  }
+}
+
+

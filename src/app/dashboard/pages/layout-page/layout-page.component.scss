@@ -1,14 +1,26 @@
 @import '../../../scss/variables.scss';
 
+.section-container{
+  position: relative;
+  width: 100%;
+}
+
+.header{
+  position: fixed;
+  top:0;
+  width: 100%;
+  z-index: 3;
+}
 
 .sidenav-container{
   height: 100vh;
   width:100%;
   background-color: $body-bc;
-
+  padding-top: 4rem;
   &__toolbar{
     width:17rem;
     background-color: $elements-bc;
+
     }
 
     &__toolbar-header{
@@ -31,8 +43,4 @@
   .sidenav-container__header-title,
   .sidenav-container__toolbar-item{
     color: $fonts-color;
-  }
-  .sidenav-container__toolbar-header,
-  .sidenav-container__toolbar-item{
-    font-weight: bolder;
   }

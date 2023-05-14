@@ -16,7 +16,6 @@ export class LayoutPageComponent implements OnInit   {
 
 public sideNavItems: SideNavItems[] = [
   {label:'warehouse List',   roles:['ADMIN','USER'], icon:'home',url:'/dashboard/warehouse-list'},
-  {label:'Add new Warehouse',roles:['ADMIN','USER'], icon:'add_box' ,url:'/dashboard/new-warehouse' },
   {label:'Closest Warehouse',roles:['ADMIN'], icon:'map' ,url:'/dashboard/map' }]
 
   constructor( ){

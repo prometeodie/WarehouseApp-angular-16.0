@@ -4,8 +4,8 @@
   margin: 0;
   padding: auto;
   box-sizing: content-box;
-  font-family: 'Roboto', sans-serif;
-  overflow: hidden;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  box-sizing: border-box;
 }
 
 body{
@@ -13,5 +13,3 @@ body{
   color: $fonts-color;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
