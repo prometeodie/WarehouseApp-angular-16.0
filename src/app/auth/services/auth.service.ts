@@ -14,21 +14,21 @@ export class AuthService {
     private readonly baseUrl: string = environment.baseUrl;
     private http = inject( HttpClient )
 
-    private _currentUser = signal< User|null>(null);
+    public _currentUser = signal< User|null>(null);
     private _authStatus = signal<AuthStatus>(AuthStatus.checking);
-    private _userRol = signal<string | null>('USER');
-
-
+    private _userRol = signal<string>('');
 
     public currentUser = computed(( )=> this._currentUser());
     public authStatus = computed(( )=> this._authStatus());
 
+
   constructor() {
     this.checkAuthStatus().subscribe();
+    console.log(this.currentUser())
    }
 
    private setUserAuthentication(user: User, accessToken: string): boolean{
-          this._currentUser.set( user );
+          this._currentUser.set(user);
           this._authStatus.set( AuthStatus.authenticated  );
           localStorage.setItem('token', accessToken);
           localStorage.setItem('id', user.id.toString());
@@ -43,6 +43,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(url, body)
     .pipe(
       map(({user, accessToken})=>{
+        console.log('peticion post',user)
         return this.setUserAuthentication(user, accessToken);
       }),
       map(()=> true),
@@ -55,16 +56,16 @@ export class AuthService {
   checkAuthStatus(): Observable<boolean>{
     // const url = `${this.baseUrl}/600/users/2`;
     const token = localStorage.getItem('token');
-    const id = parseInt( localStorage.getItem('id')!);
 
 
     if(!token) {
       this._authStatus.set( AuthStatus.noAuthenticated );
       return of(false)
     };
+    const id = parseInt( localStorage.getItem('id')!);
     this._authStatus.set( AuthStatus.authenticated );
     this.http.get<User>(`${this.baseUrl}/users/${id}`).subscribe(user =>{
-      this._currentUser.set( user );
+      this._currentUser.set(user );
       this._userRol.set(user.roles);
     })
     return of(true);
@@ -90,7 +91,7 @@ export class AuthService {
   logOutUser(){
     localStorage.clear();
     this._currentUser.set(null);
-    this._userRol.set(null);
+    this._userRol.set('');
     this._authStatus.set(AuthStatus.noAuthenticated);
   }
 

@@ -35,15 +35,9 @@ export class TableComponent implements OnInit, AfterViewInit {
     this.dashboardService.getWarehouse().subscribe(warehouses => {this.dataSource.data = warehouses;});
   }
 
-  getWarehouseById(id: string){
-    return this.dashboardService.getWarehouseById(id).subscribe((resp) => {console.log(resp?.list);return resp?.list})
-  }
-
   downloadList(id:string){
 
-    this.getWarehouseById(id);
-
-    // console.log(list);
+    this.dashboardService.downloadExcel(id);
 
   }
 

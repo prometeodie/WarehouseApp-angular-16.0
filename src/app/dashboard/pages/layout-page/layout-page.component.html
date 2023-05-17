@@ -18,16 +18,23 @@
       </mat-toolbar>
       <mat-nav-list>
         <mat-list-item
-        *ngFor="let item of sideNavItems"
-        [routerLink]="item.url"
+        routerLink="/dashboard/warehouse-list"
         (click)="sidenav.toggle()">
         <div class="sidenav-container__toolbar-item" >
-          <mat-icon [fontIcon]="item.icon" matListItemIcon ></mat-icon>
-          <span class="sidenav-container__toolbar-item-label">{{item.label}}</span>
+          <mat-icon matListItemIcon >home</mat-icon>
+          <span class="sidenav-container__toolbar-item-label">warehouse List</span>
+        </div>
+        </mat-list-item>
+
+        <mat-list-item
+        routerLink="/dashboard/map"
+        (click)="sidenav.toggle()">
+        <div class="sidenav-container__toolbar-item" >
+          <mat-icon matListItemIcon >map</mat-icon>
+          <span class="sidenav-container__toolbar-item-label">Closest Warehouse</span>
         </div>
         </mat-list-item>
       </mat-nav-list>
-
     </mat-sidenav>
     <!-- body -->
     <router-outlet></router-outlet>

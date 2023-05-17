@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { MaterialModule } from '../material/material.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderComponent } from './components/header/header.component';
 import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
@@ -11,19 +12,21 @@ import { NewWarehouseComponent } from './pages/new-warehouse/new-warehouse.compo
 import { WarehouseListComponent } from './pages/warehouse-list/warehouse-list.component';
 import { TableComponent } from './components/table/table.component';
 
+
 @NgModule({
   declarations: [
     HeaderComponent,
     LayoutPageComponent,
     MapComponent,
     NewWarehouseComponent,
-    WarehouseListComponent,
-    TableComponent
+    TableComponent,
+    WarehouseListComponent
   ],
   imports: [
     CommonModule,
-    MaterialModule,
     DashboardRoutingModule,
+    MaterialModule,
+    ReactiveFormsModule
   ]
 })
 export class DashboardModule { }

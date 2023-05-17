@@ -4,6 +4,9 @@ import { environment } from 'src/assets/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, of, map, Observable } from 'rxjs';
 import { Warehouse } from '../interfaces/warehouse.interface';
+import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +16,19 @@ export class DashboardService {
   private http = inject(HttpClient);
   private readonly baseUrl: string = environment.baseUrl;
 
+  public test: string[] =[];
+  private router = inject(Router)
   public getWarehouse(){
 
     return this.http.get<Warehouse[]>(`${this.baseUrl}/warehouses`);
+
+  }
+
+  public getWarehouseById(id:string):Observable<Warehouse | undefined>{
+    return this.http.get<Warehouse>(`${this.baseUrl}/warehouses/${id}`)
+    .pipe(
+      catchError(error => of(undefined))
+    )
   }
 
   public deleteWarehouse(id:string): Observable<{}>{
@@ -26,12 +39,74 @@ export class DashboardService {
     )
   }
 
-  public getWarehouseById(id:string):Observable<Warehouse | undefined>{
-    return this.http.get<Warehouse>(`${this.baseUrl}/warehouses/${id}`)
-    .pipe(
-      // map((resp)=>{return resp}),
-      catchError(error => of(undefined))
+  public PostNewWarehouse(warehouse: Warehouse):Observable<{}>{
+
+    return this.http.post<Warehouse>(`${this.baseUrl}/warehouses/`,warehouse).pipe(
+        tap((resp)=>{
+          if(resp){
+            Swal.fire({
+              position: 'center',
+              icon: 'success',
+              title: 'New warehouse has been saved',
+              showConfirmButton: false,
+              timer: 2000
+            })
+            this.router.navigateByUrl('dashboard/warehouse-list');
+          }
+        }),
+        catchError(error=>{
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'New warehouse has not been saved',
+            showConfirmButton: false,
+            timer: 2000
+          })
+          return of(false)
+        })
     )
+
+  }
+
+  public downloadExcel(id:string):void{
+
+    this.getWarehouseById(id).subscribe(warehouse=>{
+      if(!warehouse) {
+        Swal.fire(
+          'Error',
+          'Something goes wrong!!!',
+          'error'
+        )
+        return;
+      };
+
+        this.exportToExcel(warehouse);
+    })
+  }
+
+  //makes the warehouse list in an excel file and download the file.
+  exportToExcel(warehouse:Warehouse):void{
+    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+
+    const worksheet = XLSX.utils.json_to_sheet(warehouse.list);
+
+    const workbook : XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'sheet1');
+
+    XLSX.writeFile(workbook, `warehouse:${warehouse.name}.xlsx`)
+  }
+
+   readExcel (event:any){
+
+    const file = event.target.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsBinaryString(file);
+    fileReader.onload = (e)=>{
+      let workBook = XLSX.read(fileReader.result,{type:'binary'});
+      let sheetNames = workBook.SheetNames;
+      this.test = XLSX.utils.sheet_to_json(workBook.Sheets[sheetNames[0]])
+      console.log(this.test);
+    }
   }
 
 }

@@ -1,7 +1,7 @@
 @import '../../../scss/variables.scss';
 
 .log-in__error-menssage{
-  color: rgb(223, 45, 45);
+  color: $form-error-color;
 }
 .log-in-card{
 

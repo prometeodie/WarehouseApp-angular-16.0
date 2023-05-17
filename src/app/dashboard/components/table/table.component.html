@@ -36,13 +36,18 @@
       <th mat-header-cell *matHeaderCellDef>  </th>
       <td mat-cell class="table__last-column" *matCellDef="let element">
         <div class="btn-container">
-          <button mat-icon-button color="accent" aria-label="Download List"
-          (click)="downloadList(element.id)">
-            <mat-icon>download</mat-icon>
+          <button mat-icon-button color="accent"
+                   aria-label="Download List"
+                  *ngIf="element.list.length !== 0"
+                  (click)="downloadList(element.id)">
+                  <mat-icon>download</mat-icon>
           </button>
-          <button mat-icon-button color="warn" aria-label="Delete Warehouse"
-          (click)="deleteWarehouse(element.id,element.name)">
-            <mat-icon>delete</mat-icon>
+          <button
+              mat-icon-button
+              color="warn"
+              aria-label="Delete Warehouse"
+              (click)="deleteWarehouse(element.id,element.name)">
+              <mat-icon>delete</mat-icon>
           </button>
         </div>
         </td>

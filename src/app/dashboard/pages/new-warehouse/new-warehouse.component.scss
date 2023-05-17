@@ -1,0 +1,104 @@
+@import '../../../scss/variables.scss';
+// TODO:reducir css propiedades repetidas
+.form-section{
+  position: relative;
+  padding: 0 2rem;
+  width: 100%;
+    &__form{
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+    }
+    &__card{
+      width: 100%;
+    }
+
+    &__title{
+      padding: 0.5rem 0 0 0.5rem;
+    }
+
+    &__inputs-container{
+      width: 100%;
+      display: flex;
+    }
+
+    &__inputs-group{
+      width: 50%;
+      padding: 1rem 0 1rem 2rem;
+    }
+
+    &__inputs{
+      width: 80%;
+      color: $fonts-color;
+      background-color: rgba($color: #999, $alpha: 0.2);
+      font-size: larger;
+      padding: 1rem 0.5rem 0.5rem 0.5rem;
+      margin-bottom: 0.8rem;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    &__errors{
+      color: $form-error-color;
+    }
+
+    &__error-name{
+      display: flex;
+    }
+
+    &__name{
+      padding-right: 0.5rem;
+    }
+}
+
+.fancy-file{
+  display: none;
+}
+
+.fancy-file+label{
+  display: flex;
+  width: 80%;
+}
+
+.fancy-file__name{
+  width: 50%;
+  flex:1;
+  background-color:rgba($color: #999, $alpha: 0.2);
+  border-radius: 0 5px 5px 0;
+
+}
+.fancy-file__name__text{
+   display: block;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+  }
+
+.fancy-file__btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px 0 0 5px;
+  width: 40%;
+  background-color:$choose-file-btn-bc;
+  cursor: pointer;
+
+  &__text{
+    white-space: nowrap;
+    padding: 0 0.2rem;
+  }
+
+  &:hover{
+    background-color:rgba($choose-file-btn-bc, $alpha: 0.5) ;
+  }
+}
+.fancy-btn,
+.fancy-file__name{
+  padding: 0.75rem 0.5rem 0.75rem 0.5rem;
+}
+
+.form-btn{
+  margin: 0.8rem;
+  background-color: $choose-file-btn-bc;
+}

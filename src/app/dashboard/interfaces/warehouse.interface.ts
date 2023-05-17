@@ -1,15 +1,12 @@
 
 
 export interface Warehouse {
-  id:      number;
+  id?:     number;
   code:    number;
   name:    string;
   addres:  string;
   country: string;
   zip:     number;
-  list:    List[];
+  list:    string[];
 }
 
-export interface List {
-  cosa: string;
-}
