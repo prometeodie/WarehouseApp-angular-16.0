@@ -22,13 +22,19 @@
     <!-- Country Column -->
     <ng-container matColumnDef="country">
       <th mat-header-cell *matHeaderCellDef> Country </th>
-      <td mat-cell *matCellDef="let element"> {{element.country}} </td>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.country !== '' ; else countryHyphen">{{element.country}} </span>
+        <ng-template #countryHyphen>-</ng-template>
+      </td>
     </ng-container>
 
     <!-- Zip Column -->
     <ng-container matColumnDef="zip">
       <th mat-header-cell *matHeaderCellDef> Zip </th>
-      <td mat-cell *matCellDef="let element"> {{element.zip}} </td>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.zip !==0; else zipHyphen">{{element.zip}} </span>
+        <ng-template #zipHyphen>-</ng-template>
+       </td>
     </ng-container>
 
      <!-- download Column -->

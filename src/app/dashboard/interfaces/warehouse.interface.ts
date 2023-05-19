@@ -5,8 +5,10 @@ export interface Warehouse {
   code:    number;
   name:    string;
   addres:  string;
-  country: string;
-  zip:     number;
+  country?: string;
+  zip?:     number;
   list:    string[];
+  latLng?: [number,number];
+  // TODO:poner latitud y longitud como obligatoria
 }
 

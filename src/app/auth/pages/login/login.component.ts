@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   // TODO:Borrar las credenciales en duro
   public myForm = this.fb.group({
-    email:['olivier@mail.com',[Validators.required, Validators.pattern(this.emailPattern)]],
+    email:['admin@admin.com',[Validators.required, Validators.pattern(this.emailPattern)]],
     password:['123456',[Validators.required, Validators.minLength(6), Validators.maxLength(15)]]
   })
 

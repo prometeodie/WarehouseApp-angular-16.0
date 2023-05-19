@@ -1,0 +1,21 @@
+@import '../../../scss/variables.scss';
+
+.map-section-container,
+.map-section__map
+{
+  width: 100%;
+  height: 90%;
+}
+
+.map-section-container{
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 2rem 2rem 2rem;
+}
+
+.map-section__map{
+  padding-bottom: 2rem;
+}

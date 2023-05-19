@@ -47,7 +47,7 @@
 
         }
         &__input{
-          background-color: rgba($color: #999, $alpha: 0.2);
+          background-color:$inputs-bc rgba($color: #999, $alpha: 0.2);
           color: #333;
           font-size: larger;
           padding: 1rem 0.5rem 0.5rem 0.5rem;

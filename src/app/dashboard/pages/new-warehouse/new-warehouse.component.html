@@ -15,6 +15,19 @@
                    placeholder="Example"
                    formControlName="name"
                    class="form-section__inputs">
+    <!-- ADDRES -->
+            <div class="form-section__error-name">
+              <h3 class="form-section__name">Addres*</h3>
+              <span class="form-section__errors" *ngIf="isValidField('addres')">
+               error
+              </span>
+           </div>
+            <input matInput type="text"
+                   placeholder="Rodriguez 1050, Tandil"
+                   #addres
+                   (change)="autocompleteFormFields()"
+                   formControlName="addres"
+                   class="form-section__inputs">
     <!-- CODE -->
             <div class="form-section__error-name">
               <h3 class="form-section__name">Code*</h3>
@@ -26,23 +39,12 @@
                   placeholder="2022"
                   formControlName="code"
                   class="form-section__inputs">
-      <!-- ADDRES -->
-            <div class="form-section__error-name">
-              <h3 class="form-section__name">Addres*</h3>
-              <span class="form-section__errors" *ngIf="isValidField('addres')">
-               error
-              </span>
-           </div>
-            <input matInput type="text"
-                   placeholder="Rodriguez 1050, Tandil"
-                   formControlName="addres"
-                   class="form-section__inputs">
       </div>
 
       <!-- COUNTRY -->
       <div class=form-section__inputs-group>
         <div class="form-section__error-name">
-              <h3 class="form-section__name">Country*</h3>
+              <h3 class="form-section__name">Country</h3>
               <span class="form-section__errors" *ngIf="isValidField('country')">
                error
               </span>
