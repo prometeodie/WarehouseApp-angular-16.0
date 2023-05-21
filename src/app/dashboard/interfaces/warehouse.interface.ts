@@ -1,3 +1,4 @@
+import { LatLng } from "./latLng.interface";
 
 
 export interface Warehouse {
@@ -8,7 +9,7 @@ export interface Warehouse {
   country?: string;
   zip?:     number;
   list:    string[];
-  latLng?: [number,number];
+  latLng: LatLng;
   // TODO:poner latitud y longitud como obligatoria
 }
 

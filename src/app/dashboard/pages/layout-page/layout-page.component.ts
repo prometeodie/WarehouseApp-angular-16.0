@@ -15,7 +15,9 @@ export  interface SideNavItems{
   templateUrl: './layout-page.component.html',
   styleUrls: ['./layout-page.component.scss']
 })
-export class LayoutPageComponent implements  AfterViewInit {
+export class LayoutPageComponent implements   AfterViewInit {
+
+
 
   private  mapsService = inject(MapsService);
   private autoComplete:  google.maps.places.Autocomplete | undefined;
@@ -26,7 +28,7 @@ export class LayoutPageComponent implements  AfterViewInit {
   ngAfterViewInit(): void {
     this.autoComplete = new google.maps.places.Autocomplete(this.inpuField.nativeElement);
     this.mapsService.autoComplete(this.autoComplete);
-  }
+    }
 
   navigateToMap(){
     this.mapsService.getPlaces()

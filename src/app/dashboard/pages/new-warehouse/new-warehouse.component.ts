@@ -3,11 +3,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { DashboardService } from '../../services/dashboard.service';
 import * as XLSX from 'xlsx';
-import { Place, Warehouse } from '../../interfaces';
+import { LatLng, Place, Warehouse } from '../../interfaces';
 import { google } from "google-maps";
 import { MapsService } from '../../services/maps.service';
 import Swal from 'sweetalert2';
-import { tap } from 'rxjs';
+import { tap, map } from 'rxjs';
 
 @Component({
   selector: 'app-new-warehouse',
@@ -23,7 +23,7 @@ export class NewWarehouseComponent implements OnDestroy{
   public fancyFileText: string = 'No File Selected';
   private autoComplete:  google.maps.places.Autocomplete | undefined;
   private mapsService = inject(MapsService);
-  private latlng:[number,number] = [0,0];
+  private latlng:LatLng = {lat:0,lng:0}
 
 
   public myForm = this.fb.group({
@@ -43,12 +43,12 @@ export class NewWarehouseComponent implements OnDestroy{
 
   ngAfterViewInit(): void {
     this.autoComplete = new google.maps.places.Autocomplete(this.addres.nativeElement);
-    this.mapsService.autoComplete(this.autoComplete);
+    this.mapsService.autoCompleteWarehouse(this.autoComplete);
+    this.autoComplete.addListener('place_changed',()=>{this.autocompleteFormFields()})
   }
 
-
   ngOnDestroy(): void {
-    this.mapsService.setPlaces(null);
+    // this.mapsService.setPlaces({});
   }
 
   get currentWarehouse():Warehouse{
@@ -95,8 +95,10 @@ export class NewWarehouseComponent implements OnDestroy{
   }
 
   autocompleteFormFields(){
-    this.mapsService.getPlaces().pipe(
-      tap((place)=>{
+    this.mapsService.getPlaceWarehouse().pipe(
+      map((place)=>{
+        console.log('auitocompleteWarehouse',place);
+        if(!place?.formatted_address) return;
         this.myForm.get('addres')?.setValue(place!.formatted_address);
         this.myForm.get('country')?.setValue(place!.country);
          this.fillLatLng(place);
@@ -105,10 +107,10 @@ export class NewWarehouseComponent implements OnDestroy{
   }
 
   fillLatLng(place:Place | null):void{
-      if(!place!.location.lat() && !place!.location.lng()){this.latlng = [0,0]; return;}
-    const lat = place!.location.lat();
-    const lng = place!.location.lng();
-    this.latlng = [lat,lng];
+      if(!place!.location.lat() && !place!.location.lng()){this.latlng = {lat:0,lng:0}; return;}
+      const lat = place!.location.lat();
+      const lng = place!.location.lng();
+      this.latlng = {lat,lng};
   }
 
   // TODO metodo para poner el valor de la long y lat en una propiedad
