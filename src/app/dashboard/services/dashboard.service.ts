@@ -2,11 +2,12 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { environment } from 'src/assets/environments/environment';
 
 import { HttpClient } from '@angular/common/http';
-import { tap, catchError, of, map, Observable } from 'rxjs';
+import { tap, catchError, of, map, Observable, Subject } from 'rxjs';
 import { Warehouse } from '../interfaces/warehouse.interface';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { Place } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,9 @@ export class DashboardService {
 
   public test: string[] =[];
   private router = inject(Router)
+
+  private warehouseLocation$ = new Subject<Place>();
+  // CRUD
   public getWarehouse(){
 
     return this.http.get<Warehouse[]>(`${this.baseUrl}/warehouses`);
@@ -67,6 +71,54 @@ export class DashboardService {
     )
 
   }
+
+  // to add a new warehouse place
+  setPlaceWarehouse(place: Place) {
+    this.warehouseLocation$.next(place);
+  }
+
+  getPlaceWarehouse() {
+    return this.warehouseLocation$.asObservable();
+  }
+
+  // gets the  name, location, country, formatted_address (lat, lng) from the new warehouse's addres form
+  autoCompleteWarehouse(autoComplete: google.maps.places.Autocomplete):void{
+    autoComplete.addListener('place_changed',()=>{
+
+      const placeResponse = autoComplete.getPlace();
+
+        // The country is always in the last position of this data
+      const splitedInformation = placeResponse.formatted_address?.split(',');
+      const countryPosition = splitedInformation?.length! -1;
+      const text ='Something goes Wrong, please select a correct Addres';
+      let lat:number = 0;
+      let lng:number = 0;
+      let place!:Place;
+
+      if(!placeResponse.geometry?.location){
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: text,
+          showConfirmButton: false,
+          timer: 2000
+        })
+        
+        return;
+      }
+      lat = placeResponse.geometry?.location.lat();
+      lng = placeResponse.geometry?.location.lng();
+      place  = {
+        name: placeResponse.name,
+        location: placeResponse.geometry?.location,
+        country: splitedInformation![countryPosition],
+        formatted_address: placeResponse.formatted_address!,
+      };
+
+        this.setPlaceWarehouse(place);
+    })
+  }
+
 
   public downloadExcel(id:string):void{
 

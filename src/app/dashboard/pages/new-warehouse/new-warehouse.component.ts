@@ -21,8 +21,7 @@ export class NewWarehouseComponent implements OnDestroy{
   private  fb = inject(FormBuilder);
   private list: string[] = [];
   public fancyFileText: string = 'No File Selected';
-  private autoComplete:  google.maps.places.Autocomplete | undefined;
-  private mapsService = inject(MapsService);
+  private autoComplete!:  google.maps.places.Autocomplete;
   private latlng:LatLng = {lat:0,lng:0}
 
 
@@ -39,16 +38,16 @@ export class NewWarehouseComponent implements OnDestroy{
   @ViewChild('addres') addres!:ElementRef;
 
 
-  constructor() { this.authService.checkAuthStatus().subscribe();}
+  constructor() { this.authService.checkAuthStatus().subscribe();
+  }
 
   ngAfterViewInit(): void {
     this.autoComplete = new google.maps.places.Autocomplete(this.addres.nativeElement);
-    this.mapsService.autoCompleteWarehouse(this.autoComplete);
-    this.autoComplete.addListener('place_changed',()=>{this.autocompleteFormFields()})
+    this.dashboardService.autoCompleteWarehouse(this.autoComplete);
   }
 
   ngOnDestroy(): void {
-    // this.mapsService.setPlaces({});
+    // this.mapsService.setPlaces({}); TODO:borrar
   }
 
   get currentWarehouse():Warehouse{
@@ -77,25 +76,14 @@ export class NewWarehouseComponent implements OnDestroy{
         const warehouse: Warehouse = this.currentWarehouse;
         warehouse.list = this.list;
         this.dashboardService.PostNewWarehouse(warehouse).subscribe();
+
       }
     })
 
   }
 
-  readExcel (event:any):void{
-    this.getFileName();
-    const file = event.target.files[0];
-    let fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
-    fileReader.onload = (e)=>{
-      let workBook = XLSX.read(fileReader.result,{type:'binary'});
-      let sheetNames = workBook.SheetNames;
-      this.list = XLSX.utils.sheet_to_json(workBook.Sheets[sheetNames[0]])
-    }
-  }
-
   autocompleteFormFields(){
-    this.mapsService.getPlaceWarehouse().pipe(
+    this.dashboardService.getPlaceWarehouse().pipe(
       map((place)=>{
         console.log('auitocompleteWarehouse',place);
         if(!place?.formatted_address) return;
@@ -107,10 +95,24 @@ export class NewWarehouseComponent implements OnDestroy{
   }
 
   fillLatLng(place:Place | null):void{
-      if(!place!.location.lat() && !place!.location.lng()){this.latlng = {lat:0,lng:0}; return;}
-      const lat = place!.location.lat();
-      const lng = place!.location.lng();
+    console.log('antes del if')
+    if(!place!.location.lat() && !place!.location.lng()){this.latlng = {lat:0,lng:0}; return;}
+    const lat = place!.location.lat();
+    const lng = place!.location.lng();
+    console.log('despues del if',lat,lng)
       this.latlng = {lat,lng};
+  }
+
+    readExcel (event:any):void{
+    this.getFileName();
+    const file = event.target.files[0];
+    let fileReader = new FileReader();
+    fileReader.readAsBinaryString(file);
+    fileReader.onload = (e)=>{
+      let workBook = XLSX.read(fileReader.result,{type:'binary'});
+      let sheetNames = workBook.SheetNames;
+      this.list = XLSX.utils.sheet_to_json(workBook.Sheets[sheetNames[0]])
+    }
   }
 
   // TODO metodo para poner el valor de la long y lat en una propiedad

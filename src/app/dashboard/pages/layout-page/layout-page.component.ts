@@ -27,7 +27,10 @@ export class LayoutPageComponent implements   AfterViewInit {
 
   ngAfterViewInit(): void {
     this.autoComplete = new google.maps.places.Autocomplete(this.inpuField.nativeElement);
-    this.mapsService.autoComplete(this.autoComplete);
+    this.autoComplete.addListener('place_changed',()=>{
+    this.mapsService.autoComplete(this.autoComplete!);
+  })
+    // this.autoComplete!.addListener('place_changed',()=>{this.mapsService.autoComplete(new google.maps.places.Autocomplete(this.inpuField.nativeElement))})
     }
 
   navigateToMap(){

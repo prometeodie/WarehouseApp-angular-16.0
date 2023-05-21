@@ -1,9 +1,8 @@
-import { Injectable, inject  } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Injectable  } from '@angular/core';
+import {  BehaviorSubject } from 'rxjs';
 import { google } from "google-maps";
-import { LatLng, Place, Warehouse } from '../interfaces';
+import { LatLng } from '../interfaces';
 import Swal from 'sweetalert2';
-import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/assets/environments/environment';
 
 
@@ -12,9 +11,15 @@ import { environment } from 'src/assets/environments/environment';
 })
 export class MapsService {
 
-  private place$ = new Subject<LatLng>();
-  private placeWarehouse$ = new Subject<Place | null>();
-  private http = inject(HttpClient)
+
+  private _place$ = new BehaviorSubject<LatLng>({lat:0,lng:0});
+  public get place$() {
+    return this._place$;
+  }
+  public set place$(value) {
+    this._place$ = value;
+  }
+
   private readonly baseUrl: string = environment.baseUrl;
 
   // to search a place
@@ -26,25 +31,12 @@ export class MapsService {
     return this.place$.asObservable();
   }
 
-  // to add a new warehouse place
-  setPlaceWarehouse(place: Place  | null) {
-    this.placeWarehouse$.next(place);
-  }
-
-  getPlaceWarehouse() {
-    return this.placeWarehouse$.asObservable();
-  }
-
   constructor() {
-  }
-
-  getPlacesHttp(){
-    return this.http.get<Warehouse[]>(`${this.baseUrl}/warehouses`);
   }
 
   // gets the latitude and longitude from the place that the user has chose
   autoComplete(autoComplete: google.maps.places.Autocomplete):void{
-
+    // autoComplete.addListener('place_changed',()=>{
 
       const placeResponse = autoComplete.getPlace();
       let lat:number = 0;
@@ -61,36 +53,6 @@ export class MapsService {
         this.setPlaces({lat, lng});
 
   }
-// gets the  name, location, country, formatted_address (lat, lng) from the new warehouse's addres form
-  autoCompleteWarehouse(autoComplete: google.maps.places.Autocomplete):void{
-    autoComplete.addListener('place_changed',()=>{
-
-      const placeResponse = autoComplete.getPlace();
-
-        // The country is always in the last position of this data
-      const splitedInformation = placeResponse.formatted_address?.split(',');
-      const countryPosition = splitedInformation?.length! -1;
-      const text ='Something goes Wrong, please select a correct Addres';
-      let lat:number = 0;
-      let lng:number = 0;
-      let place!:Place;
-
-      if(!placeResponse.geometry?.location){
-        this.errorMenssageScreen(text);
-        return;
-      }
-      lat = placeResponse.geometry?.location.lat();
-      lng = placeResponse.geometry?.location.lng();
-      place  = {
-        name: placeResponse.name,
-        location: placeResponse.geometry?.location,
-        country: splitedInformation![countryPosition],
-        formatted_address: placeResponse.formatted_address!,
-      };
-
-        this.setPlaceWarehouse(place);
-    })
-  }
 
   // shows a screen pop-up error when the direction doesn't exist
   errorMenssageScreen(text:string){
@@ -104,3 +66,4 @@ export class MapsService {
   }
 
 }
+
