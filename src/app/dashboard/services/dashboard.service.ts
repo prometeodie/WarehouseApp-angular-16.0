@@ -7,7 +7,7 @@ import { Warehouse } from '../interfaces/warehouse.interface';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { Place } from '../interfaces';
+import { FixedWarehouses, Place } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,7 @@ export class DashboardService {
   private router = inject(Router)
 
   private warehouseLocation$ = new Subject<Place>();
+
   // CRUD
   public getWarehouse(){
 
@@ -103,7 +104,7 @@ export class DashboardService {
           showConfirmButton: false,
           timer: 2000
         })
-        
+
         return;
       }
       lat = placeResponse.geometry?.location.lat();

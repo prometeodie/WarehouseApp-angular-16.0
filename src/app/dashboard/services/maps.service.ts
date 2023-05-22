@@ -1,9 +1,10 @@
-import { Injectable  } from '@angular/core';
+import { Injectable, inject  } from '@angular/core';
 import {  BehaviorSubject } from 'rxjs';
 import { google } from "google-maps";
-import { LatLng } from '../interfaces';
+import { CenterAddres, LatLng } from '../interfaces';
 import Swal from 'sweetalert2';
 import { environment } from 'src/assets/environments/environment';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -11,8 +12,11 @@ import { environment } from 'src/assets/environments/environment';
 })
 export class MapsService {
 
+  private readonly baseUrl: string = environment.baseUrl;
+  private route = inject(Router);
 
-  private _place$ = new BehaviorSubject<LatLng>({lat:0,lng:0});
+  private _place$ = new BehaviorSubject<CenterAddres>({ latLng:{lat:0,lng:0}, addresTitle:'' });
+
   public get place$() {
     return this._place$;
   }
@@ -20,10 +24,9 @@ export class MapsService {
     this._place$ = value;
   }
 
-  private readonly baseUrl: string = environment.baseUrl;
 
   // to search a place
-  setPlaces(place: LatLng) {
+  setPlaces(place: CenterAddres) {
     this.place$.next(place);
   }
 
@@ -36,7 +39,6 @@ export class MapsService {
 
   // gets the latitude and longitude from the place that the user has chose
   autoComplete(autoComplete: google.maps.places.Autocomplete):void{
-    // autoComplete.addListener('place_changed',()=>{
 
       const placeResponse = autoComplete.getPlace();
       let lat:number = 0;
@@ -45,12 +47,13 @@ export class MapsService {
 
         if(!placeResponse.geometry?.location){
           this.errorMenssageScreen(text);
+          this.route.navigateByUrl('dasboard/warehouse-list');
           return;
         }
       lat = placeResponse.geometry?.location.lat(),
       lng = placeResponse.geometry?.location.lng(),
 
-        this.setPlaces({lat, lng});
+        this.setPlaces( { latLng:{lat, lng}, addresTitle:placeResponse.formatted_address! });
 
   }
 
