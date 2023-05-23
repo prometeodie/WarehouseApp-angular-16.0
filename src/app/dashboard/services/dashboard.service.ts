@@ -56,7 +56,6 @@ export class DashboardService {
               showConfirmButton: false,
               timer: 2000
             })
-            this.router.navigateByUrl('dashboard/warehouse-list');
           }
         }),
         catchError(error=>{

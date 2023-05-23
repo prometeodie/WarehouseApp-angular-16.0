@@ -1,5 +1,14 @@
 @import '../../../scss/variables.scss';
 // TODO:reducir css propiedades repetidas
+
+.errors{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  bottom: 0;
+  left:3rem;
+  z-index: 999999;
+}
 .form-section{
   position: relative;
   padding: 0 2rem;

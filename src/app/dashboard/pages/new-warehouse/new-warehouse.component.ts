@@ -1,24 +1,26 @@
-import { Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { DashboardService } from '../../services/dashboard.service';
 import * as XLSX from 'xlsx';
 import { LatLng, Place, Warehouse } from '../../interfaces';
 import { google } from "google-maps";
-import { MapsService } from '../../services/maps.service';
 import Swal from 'sweetalert2';
-import { tap, map } from 'rxjs';
+import {map } from 'rxjs';
+import { FormsValidatorsService } from 'src/app/shared/services/forms-validators.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-warehouse',
   templateUrl: './new-warehouse.component.html',
   styleUrls: ['./new-warehouse.component.scss']
 })
-export class NewWarehouseComponent implements OnDestroy{
+export class NewWarehouseComponent  {
 
-  private authService = inject(AuthService);
+  private router = inject(Router);
   private dashboardService = inject(DashboardService);
   private  fb = inject(FormBuilder);
+  private fvService = inject(FormsValidatorsService);
   private list: string[] = [];
   public fancyFileText: string = 'No File Selected';
   private autoComplete!:  google.maps.places.Autocomplete;
@@ -26,28 +28,23 @@ export class NewWarehouseComponent implements OnDestroy{
 
 
   public myForm = this.fb.group({
-    addres:['test 1234',[Validators.required, Validators.minLength(3)]],
-    code:[0,[Validators.required, Validators.min(0)]],
-    country:['Argentina',[]],
-    list:[ [''] ,[]],
-    name:['test',[Validators.required,Validators.minLength(2)]],
-    zip:[0,[]]
+    addres :['test 1234',[Validators.required, Validators.minLength(3)]],
+    code   :[0,[Validators.required, Validators.min(0)],[]],
+    country:['Argentina',[],[]],
+    list   :[ [''] ,[]],
+    name   :['test',[Validators.required,Validators.minLength(2)]],
+    zip    :[0,[Validators.min(0)]]
   })
 
   @ViewChild("file", {read: ElementRef}) file!: ElementRef;
   @ViewChild('addres') addres!:ElementRef;
 
 
-  constructor() { this.authService.checkAuthStatus().subscribe();
-  }
+  constructor() {}
 
   ngAfterViewInit(): void {
     this.autoComplete = new google.maps.places.Autocomplete(this.addres.nativeElement);
     this.dashboardService.autoCompleteWarehouse(this.autoComplete);
-  }
-
-  ngOnDestroy(): void {
-    // this.mapsService.setPlaces({}); TODO:borrar
   }
 
   get currentWarehouse():Warehouse{
@@ -76,7 +73,8 @@ export class NewWarehouseComponent implements OnDestroy{
         const warehouse: Warehouse = this.currentWarehouse;
         warehouse.list = this.list;
         this.dashboardService.PostNewWarehouse(warehouse).subscribe();
-
+        this.myForm.reset()
+        this.router.navigateByUrl('dashboard/warehouse-list');
       }
     })
 
@@ -115,12 +113,13 @@ export class NewWarehouseComponent implements OnDestroy{
     }
   }
 
-  // TODO metodo para poner el valor de la long y lat en una propiedad
 
-  // TODO:colocarlo en el validatorService
   isValidField(field: string):boolean | null{
-    return this.myForm.get(field)!.errors &&
-           this.myForm.get(field)!.touched
+    return this.fvService.isValidField(this.myForm,field);
+  }
+
+  showError( field:string){
+    return this.fvService.showError(this.myForm,field);
   }
 
 

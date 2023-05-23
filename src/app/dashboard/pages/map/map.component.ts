@@ -5,6 +5,7 @@ import { google } from "google-maps";
 import { CenterAddres, FixedWarehouses, LatLng, Marker, Warehouse, WarehousesDistance } from '../../interfaces';
 import { catchError, map } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
+import { NONE_TYPE } from '@angular/compiler';
 
 @Component({
   selector: 'app-map',
@@ -30,8 +31,8 @@ export class MapComponent implements  OnInit  {
   public maps!      : google.maps.Map;
   private distanceMatrixService = new google.maps.DistanceMatrixService();
   // TODO:borrar
-  private directionsRenderer = new google.maps.DirectionsRenderer();
-  private directionsService = new google.maps.DirectionsService();
+  private directionsRenderer!:  google.maps.DirectionsRenderer;
+  private directionsService !:  google.maps.DirectionsService;
 
   constructor() {
       this.authService.checkAuthStatus().subscribe();
@@ -39,16 +40,17 @@ export class MapComponent implements  OnInit  {
     }
     ngOnInit(): void {
 
-
+      this.directionsService = new   google.maps.DirectionsService();
+      this.directionsRenderer = new   google.maps.DirectionsRenderer();
       this.dashboardService.getWarehouse().pipe(
        map((warehouses)=> {
         this.mapsService.getPlaces().subscribe(addres =>{
 
           this.addres = addres;
           this.placeResponse = addres.latLng;
-          console.log(this.placeResponse)
           this.ClosestWarehouses(addres.latLng,warehouses)
           this.initMap();
+
         })
        }),
        catchError(err => {return err})
@@ -67,15 +69,15 @@ export class MapComponent implements  OnInit  {
         }
 
         this.maps = new google.maps.Map(this.map.nativeElement, options);
-
+        // marker for the User's location
        const marker ={
           position: this.addres.latLng,
           map: this.maps,
           title: this.addres.addresTitle
         }
-        this.fitBoundMarkers(this.addres.latLng)
+         this.addMarker(marker);
 
-        this.addMarker(marker)
+        this.fitBoundMarkers(this.addres.latLng)
 
   }
 
@@ -97,12 +99,12 @@ export class MapComponent implements  OnInit  {
         this.closestWarehouses = this.sortClosestWarehouses(this.fixAddreses(distances,warehouses))
         this.isMapLoaded = true;
         this.renderMarkers(this.closestWarehouses);
-
+        this.polyline(this.addres,this.closestWarehouses[0]);
       } );
     }
 
  fixAddreses(distance:WarehousesDistance, warehouses:Warehouse[]){
-  // note: google response has an margin error with the adress, this method fix that issue
+  // note: google's response has an margin error with the adress, this method fix that issue
   // using the address saved in the warehouse response.
 
     return warehouses.map((warehouse,i)=>{
@@ -118,12 +120,13 @@ export class MapComponent implements  OnInit  {
     }).filter( resp=> resp.status === 'OK');
  }
 
-
+// sort and slice warehouse's array
  sortClosestWarehouses(warehouses:FixedWarehouses[]){
   const warehouseAmount = 3;
   return warehouses.sort((a,b)=>{ return a.distance!.value - b.distance!.value }).slice(0,warehouseAmount);
  }
 
+//  set a marker
  addMarker(marker:Marker){
   return new google.maps.Marker({
     position: marker.position,
@@ -133,6 +136,7 @@ export class MapComponent implements  OnInit  {
   })
  }
 
+//  transform and warehouse aareay in a marker's array and add the Markers
  renderMarkers(warehouses:FixedWarehouses[]) {
 
   let markers!:Marker[];
@@ -140,15 +144,16 @@ export class MapComponent implements  OnInit  {
   markers =  warehouses.map((warehouse,i)=>{
     const title: string = `Name: ${warehouse.name}, Addres: ${warehouse.addres}`;
     const label = (i+1).toString();
-    this.fitBoundMarkers(warehouse.latLng!)
 
+    this.fitBoundMarkers(warehouse.latLng!)
     return {
       position: warehouse.latLng!,
       label,
       title
      }
   })
-   markers.forEach(marker => {
+
+   markers.forEach((marker,i) => {
     this.addMarker(marker);
   });
 }
@@ -156,6 +161,26 @@ export class MapComponent implements  OnInit  {
   fitBoundMarkers(warehouseLatLng:LatLng){
       this.bounds.extend(warehouseLatLng)
       this.maps.fitBounds(this.bounds)
+  }
+
+  polyline(origin:CenterAddres, destination:FixedWarehouses){
+    let request ={
+      origin: origin.latLng,
+      destination: destination.latLng,
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    this.directionsService.route(request, (response,status)=>{
+      this.directionsRenderer.setOptions({
+        suppressPolylines: false,
+        suppressMarkers: true,
+        map:this.maps
+      });
+
+      if(status === google.maps.DirectionsStatus.OK){
+        this.directionsRenderer.setDirections(response);
+      }
+    })
   }
 
 }

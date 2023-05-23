@@ -8,7 +8,7 @@
             <div class="form-section__error-name">
               <h3 class="form-section__name">Name*</h3>
               <span class="form-section__errors" *ngIf="isValidField('name')">
-               error
+                {{showError('name')}}
               </span>
            </div>
             <input matInput type="text"
@@ -19,7 +19,7 @@
             <div class="form-section__error-name">
               <h3 class="form-section__name">Addres*</h3>
               <span class="form-section__errors" *ngIf="isValidField('addres')">
-               error
+              {{showError( 'addres')}}
               </span>
            </div>
             <input matInput type="text"
@@ -32,7 +32,7 @@
             <div class="form-section__error-name">
               <h3 class="form-section__name">Code*</h3>
               <span class="form-section__errors" *ngIf="isValidField('code')">
-              error
+                {{showError( 'code')}}
               </span>
           </div>
             <input matInput type="number"
@@ -46,7 +46,7 @@
         <div class="form-section__error-name">
               <h3 class="form-section__name">Country</h3>
               <span class="form-section__errors" *ngIf="isValidField('country')">
-               error
+                {{showError( 'country')}}
               </span>
            </div>
             <input matInput type="text"
@@ -57,7 +57,7 @@
             <div>
                <h3 class="form-section__name">Zip</h3>
                <span class="form-section__errors" *ngIf="isValidField('zip')">
-                error
+                {{showError( 'zip')}}
                </span>
             </div>
             <input matInput type="number"
@@ -89,4 +89,12 @@
         <button mat-raised-button [disabled]="myForm.invalid" class="form-btn" type="submit">Save</button>
         </form>
         </mat-card>
+        <!-- TODO:borrar tambien la class -->
+        <div class="errors">
+          <span>ERRORS name:{{myForm.get('name')?.errors | json}}</span>
+          <span>ERRORS country:{{myForm.get('country')?.errors | json}}</span>
+          <span>ERRORS code:{{myForm.get('code')?.errors | json}}</span>
+          <span>ERRORS addres:{{myForm.get('addres')?.errors | json}}</span>
+          <span>ERRORS zip:{{myForm.get('zip')?.errors | json}}</span>
+        </div>
 </section>
