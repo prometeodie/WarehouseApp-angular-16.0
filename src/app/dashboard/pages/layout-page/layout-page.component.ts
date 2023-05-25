@@ -3,6 +3,7 @@ import { google } from "google-maps";
 import { MapsService } from '../../services/maps.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 export  interface SideNavItems{
   label:string;
@@ -17,20 +18,22 @@ export  interface SideNavItems{
 })
 export class LayoutPageComponent implements   AfterViewInit {
 
-
-
   private  mapsService = inject(MapsService);
   private autoComplete:  google.maps.places.Autocomplete | undefined;
-  public place: any= [];
   private router = inject(Router);
+  private authService = inject(AuthService);
    @ViewChild('inpuField') inpuField!:ElementRef;
+
+   constructor(){
+    this.authService.checkAuthStatus().subscribe();
+   }
+
 
   ngAfterViewInit(): void {
     this.autoComplete = new google.maps.places.Autocomplete(this.inpuField.nativeElement);
     this.autoComplete.addListener('place_changed',()=>{
     this.mapsService.autoComplete(this.autoComplete!);
   })
-    // this.autoComplete!.addListener('place_changed',()=>{this.mapsService.autoComplete(new google.maps.places.Autocomplete(this.inpuField.nativeElement))})
     }
 
   navigateToMap(){

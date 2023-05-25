@@ -16,7 +16,7 @@ export class AppComponent {
   public router = inject(Router);
 
   constructor(){
-    // this.authService.checkAuthStatus().subscribe();
+    this.authService.checkAuthStatus().subscribe();
   }
 
   public finishAuthCheck = computed<boolean>(()=>{

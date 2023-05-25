@@ -42,6 +42,7 @@ export class MapComponent implements  OnInit  {
 
       this.directionsService = new   google.maps.DirectionsService();
       this.directionsRenderer = new   google.maps.DirectionsRenderer();
+
       this.dashboardService.getWarehouse().pipe(
        map((warehouses)=> {
         this.mapsService.getPlaces().subscribe(addres =>{
@@ -82,6 +83,7 @@ export class MapComponent implements  OnInit  {
   }
 
   ClosestWarehouses(location:LatLng, warehouses:Warehouse[]){
+
     const{lat, lng}=location;
     if(lat === 0 && lng === 0) return;
       const warehousesLocation:LatLng[] = warehouses.map(warehouses=>{return warehouses.latLng});

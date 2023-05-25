@@ -1,8 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { environment } from '../../../assets/environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthStatus, CheckTokenResponse, LoginResponse, User } from '../interfaces';
-import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { AuthStatus, LoginResponse, User } from '../interfaces';
+import {  Observable, Subject, catchError, map, of, throwError } from 'rxjs';
+import { Rol } from '../interfaces/rol.iterface';
 
 
 
@@ -14,24 +15,30 @@ export class AuthService {
     private readonly baseUrl: string = environment.baseUrl;
     private http = inject( HttpClient )
 
+    // signals
     public _currentUser = signal< User|null>(null);
     private _authStatus = signal<AuthStatus>(AuthStatus.checking);
-    private _userRol = signal<string>('');
 
     public currentUser = computed(( )=> this._currentUser());
     public authStatus = computed(( )=> this._authStatus());
 
 
+    //  Subject to save the user's rol
+    private UserRol$ = new Subject<string>();
+
+
   constructor() {
     this.checkAuthStatus().subscribe();
-    console.log(this.currentUser())
    }
 
    private setUserAuthentication(user: User, accessToken: string): boolean{
           this._currentUser.set(user);
-          this._authStatus.set( AuthStatus.authenticated  );
+          this._authStatus.set( AuthStatus.authenticated );
+
           localStorage.setItem('token', accessToken);
           localStorage.setItem('id', user.id.toString());
+          this.setUsersRol(user.roles);
+
 
           return true;
     }
@@ -43,7 +50,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(url, body)
     .pipe(
       map(({user, accessToken})=>{
-        console.log('peticion post',user)
+        this.getUsersRol().subscribe(resp => console.log('login',resp))
         return this.setUserAuthentication(user, accessToken);
       }),
       map(()=> true),
@@ -54,9 +61,8 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean>{
-    // const url = `${this.baseUrl}/600/users/2`;
-    const token = localStorage.getItem('token');
 
+    const token = localStorage.getItem('token');
 
     if(!token) {
       this._authStatus.set( AuthStatus.noAuthenticated );
@@ -64,10 +70,13 @@ export class AuthService {
     };
     const id = parseInt( localStorage.getItem('id')!);
     this._authStatus.set( AuthStatus.authenticated );
-    this.http.get<User>(`${this.baseUrl}/users/${id}`).subscribe(user =>{
-      this._currentUser.set(user );
-      this._userRol.set(user.roles);
-    })
+
+    this.http.get<User>(`${this.baseUrl}/users/${id}`).pipe(
+      map( user =>{this.setUserAuthentication(user, token);
+        this.getUsersRol().subscribe(resp => console.log('check',resp))
+      }
+      )
+    ).subscribe()
     return of(true);
 
     //TODO: Real solution for a real case "below"
@@ -85,14 +94,24 @@ export class AuthService {
     //       return of(false);
     //     })
     // )
-
   }
+
+  // Setter and Getter to manage the User's Rol
+
+  setUsersRol(UserRol:string) {
+    this.UserRol$.next(UserRol);
+  }
+
+  getUsersRol() {
+    return this.UserRol$.asObservable();
+  }
+
 
   logOutUser(){
     localStorage.clear();
     this._currentUser.set(null);
-    this._userRol.set('');
     this._authStatus.set(AuthStatus.noAuthenticated);
+    this.setUsersRol('');
   }
 
 }

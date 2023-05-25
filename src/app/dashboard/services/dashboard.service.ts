@@ -6,8 +6,7 @@ import { tap, catchError, of, map, Observable, Subject } from 'rxjs';
 import { Warehouse } from '../interfaces/warehouse.interface';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
-import { FixedWarehouses, Place } from '../interfaces';
+import { Place } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +17,10 @@ export class DashboardService {
   private readonly baseUrl: string = environment.baseUrl;
 
   public test: string[] =[];
-  private router = inject(Router)
 
   private warehouseLocation$ = new Subject<Place>();
+
+  public _autocompleteResponse:any = signal('')
 
   // CRUD
   public getWarehouse(){
@@ -95,7 +95,7 @@ export class DashboardService {
       let lng:number = 0;
       let place!:Place;
 
-      if(!placeResponse.geometry?.location){
+      if(!placeResponse.place_id){
         Swal.fire({
           position: 'center',
           icon: 'error',
@@ -106,11 +106,13 @@ export class DashboardService {
 
         return;
       }
-      lat = placeResponse.geometry?.location.lat();
-      lng = placeResponse.geometry?.location.lng();
+        this._autocompleteResponse= placeResponse.place_id;
+
+      lat = placeResponse.geometry?.location.lat()!;
+      lng = placeResponse.geometry?.location.lng()!;
       place  = {
         name: placeResponse.name,
-        location: placeResponse.geometry?.location,
+        location: placeResponse.geometry?.location!,
         country: splitedInformation![countryPosition],
         formatted_address: placeResponse.formatted_address!,
       };

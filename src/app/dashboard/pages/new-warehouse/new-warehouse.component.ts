@@ -1,6 +1,5 @@
 import { Component, ElementRef, ViewChild, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/auth/services/auth.service';
+import { FormBuilder, Validators } from '@angular/forms';
 import { DashboardService } from '../../services/dashboard.service';
 import * as XLSX from 'xlsx';
 import { LatLng, Place, Warehouse } from '../../interfaces';
@@ -10,6 +9,7 @@ import {map } from 'rxjs';
 import { FormsValidatorsService } from 'src/app/shared/services/forms-validators.service';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-new-warehouse',
   templateUrl: './new-warehouse.component.html',
@@ -18,19 +18,21 @@ import { Router } from '@angular/router';
 export class NewWarehouseComponent  {
 
   private router = inject(Router);
-  private dashboardService = inject(DashboardService);
   private  fb = inject(FormBuilder);
+  private dashboardService = inject(DashboardService);
   private fvService = inject(FormsValidatorsService);
+
   private list: string[] = [];
   public fancyFileText: string = 'No File Selected';
   private autoComplete!:  google.maps.places.Autocomplete;
   private latlng:LatLng = {lat:0,lng:0}
 
 
+
   public myForm = this.fb.group({
-    addres :['test 1234',[Validators.required, Validators.minLength(3)]],
-    code   :[0,[Validators.required, Validators.min(0)],[]],
-    country:['Argentina',[],[]],
+    addres :['test 1234',{validators:[Validators.required,this.fvService.validateAddres],asyncValidators:[this.fvService.validateAddres()], updateOn:'blur'}],
+    code   :[0,{validators:[Validators.required, Validators.min(0)],asyncValidators:[this.fvService.duplicateCode()], updateOn:'blur'}],
+    country:['Argentina',[]],
     list   :[ [''] ,[]],
     name   :['test',[Validators.required,Validators.minLength(2)]],
     zip    :[0,[Validators.min(0)]]
@@ -83,21 +85,23 @@ export class NewWarehouseComponent  {
   autocompleteFormFields(){
     this.dashboardService.getPlaceWarehouse().pipe(
       map((place)=>{
-        console.log('auitocompleteWarehouse',place);
+
         if(!place?.formatted_address) return;
         this.myForm.get('addres')?.setValue(place!.formatted_address);
         this.myForm.get('country')?.setValue(place!.country);
-         this.fillLatLng(place);
+        this.fillLatLng(place);
+        // this information saved in the local storage it's used to make the addres validation
+        localStorage.setItem('addres',place!.formatted_address);
       })
     ).subscribe()
   }
 
   fillLatLng(place:Place | null):void{
-    console.log('antes del if')
+
     if(!place!.location.lat() && !place!.location.lng()){this.latlng = {lat:0,lng:0}; return;}
     const lat = place!.location.lat();
     const lng = place!.location.lng();
-    console.log('despues del if',lat,lng)
+
       this.latlng = {lat,lng};
   }
 
@@ -122,5 +126,6 @@ export class NewWarehouseComponent  {
     return this.fvService.showError(this.myForm,field);
   }
 
-
 }
+
+

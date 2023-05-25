@@ -45,13 +45,13 @@ export class MapsService {
       let lng:number = 0;
       const text ='Something goes Wrong, please select a correct Addres';
 
-        if(!placeResponse.geometry?.location){
+        if(!placeResponse.place_id){
           this.errorMenssageScreen(text);
           this.route.navigateByUrl('dasboard/warehouse-list');
           return;
         }
-      lat = placeResponse.geometry?.location.lat(),
-      lng = placeResponse.geometry?.location.lng(),
+      lat = placeResponse.geometry?.location.lat()!,
+      lng = placeResponse.geometry?.location.lng()!,
 
         this.setPlaces( { latLng:{lat, lng}, addresTitle:placeResponse.formatted_address! });
 
